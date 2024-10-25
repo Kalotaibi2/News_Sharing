@@ -26,6 +26,12 @@ def preprocess_data(input_data):
     input_data_df.columns = input_data_df.columns.str.strip()  # Ensure no leading/trailing spaces
     input_data_df = input_data_df[scaler.feature_names_in_]  # Ensure same column order and names as training
 
+    # Check for missing columns and add them with default values if necessary
+    for column in scaler.feature_names_in_:
+        if column not in input_data_df.columns:
+            input_data_df[column] = 0  # Fill missing columns with default values, such as zero
+
+    
     # Apply scaling, interaction terms, and dimensionality reduction
     data_scaled = scaler.transform(input_data_df)
     data_poly = poly.transform(data_scaled)
