@@ -27,7 +27,7 @@ def preprocess_data(input_data):
     input_data_df = input_data_df[scaler.feature_names_in_]  # Ensure same column order and names as training
 
     # Apply scaling, interaction terms, and dimensionality reduction
-    data_scaled = scaler.transform(numeric_data)
+    data_scaled = scaler.transform(input_data_df)
     data_poly = poly.transform(data_scaled)
     data_reduced = fld.transform(data_poly)
     return data_reduced
