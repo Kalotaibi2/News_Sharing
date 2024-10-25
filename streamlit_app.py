@@ -88,12 +88,15 @@ st.sidebar.title("Choose Model")
 model_choice = st.sidebar.selectbox("Select a model:", ["Logistic Regression", "LDA", "Neural Network"])
 
 # Make predictions based on model choice
-if model_choice == "Logistic Regression":
-    predictions = log_reg_model.predict(processed_data)
-elif model_choice == "LDA":
-    predictions = lda_model.predict(processed_data)
+if processed_data is not None:
+    if model_choice == "Logistic Regression":
+        predictions = log_reg_model.predict(processed_data)
+    elif model_choice == "LDA":
+        predictions = lda_model.predict(processed_data)
+    else:
+        predictions = nn_model.predict(processed_data)
 else:
-    predictions = nn_model.predict(processed_data)
+    st.warning("Please upload a valid file or input correct data.")
 
 # Map numerical predictions to readable categories
 category_map = {0: "Low", 1: "Medium", 2: "High"}
