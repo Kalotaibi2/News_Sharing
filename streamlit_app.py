@@ -20,23 +20,35 @@ st.sidebar.title("Input Method")
 input_method = st.sidebar.radio("Choose input method:", ["Manual Input", "Upload CSV"])
 
 # Function to preprocess data (manual input or from CSV)
+# Function to preprocess data (manual input or from CSV)
 def preprocess_data(input_data):
-    # Convert input to DataFrame and strip spaces in column names
-    input_data_df = pd.DataFrame([input_data])
-    input_data_df.columns = input_data_df.columns.str.strip()  # Ensure no leading/trailing spaces
-   
+    # If input_data is a dictionary (manual input), convert it to DataFrame; otherwise, assume it's already a DataFrame
+    if isinstance(input_data, dict):
+        input_data_df = pd.DataFrame([input_data])  # Convert dictionary to DataFrame (manual input)
+    else:
+        input_data_df = input_data  # Already a DataFrame (CSV file)
+    
+    # Ensure column names are clean
+    input_data_df.columns = input_data_df.columns.str.strip()  # Strip any leading/trailing spaces
+    
+    """# Define the expected columns (after removing "Average Keyword Performance")
+    expected_columns = ["n_tokens_title", "n_tokens_content", "num_hrefs", "num_imgs"]
+    
+    # Check if any of the expected columns are missing
+    missing_columns = [col for col in expected_columns if col not in input_data_df.columns]
+    
+    if missing_columns:
+        st.error(f"Uploaded file is missing columns: {', '.join(missing_columns)}")
+        return None  # If there are missing columns, stop further processing"""
 
-    # Check for missing columns and add them with default values if necessary
-    for column in scaler.feature_names_in_:
-        if column not in input_data_df.columns:
-            input_data_df[column] = 0  # Fill missing columns with default values, such as zero
-
-    input_data_df = input_data_df[scaler.feature_names_in_]  # Ensure same column order and names as training
-
-    # Apply scaling, interaction terms, and dimensionality reduction
+    # Ensure the correct column order
+    input_data_df = input_data_df[expected_columns]
+    
+    # Apply scaling, interaction terms, and dimensionality reduction (from trained models)
     data_scaled = scaler.transform(input_data_df)
     data_poly = poly.transform(data_scaled)
     data_reduced = fld.transform(data_poly)
+    
     return data_reduced
 
 # Option 1: Manual Input
@@ -47,7 +59,6 @@ if input_method == "Manual Input":
     n_tokens_content = st.number_input('Number of Words in Content', min_value=1)
     num_hrefs = st.number_input('Number of Hyperlinks', min_value=0)
     num_imgs = st.number_input('Number of Images', min_value=0)
-    kw_avg_avg = st.number_input('Average Keyword Performance', min_value=0.0)
 
     # Collect user inputs in Streamlit
     input_data = {
@@ -55,7 +66,6 @@ if input_method == "Manual Input":
         "n_tokens_content": n_tokens_content,
         "num_hrefs": num_hrefs,
         "num_imgs": num_imgs,
-        "kw_avg_avg": kw_avg_avg,
     }
 
     # Preprocess the input data
