@@ -85,9 +85,13 @@ elif model_choice == "LDA":
 else:
     predictions = nn_model.predict(processed_data)
 
-# Display results
+# Map numerical predictions to readable categories
+category_map = {0: "Low", 1: "Medium", 2: "High"}
+predicted_categories = [category_map[pred] for pred in predictions]
+
+# Display results in a user-friendly way
 st.write("Predicted Share Categories (Low, Medium, High):")
-st.write(predictions)
+st.write(predicted_categories)
 
 # Since this is a live demo, accuracy metrics can't be calculated unless there is labeled data
 st.write("Note: Since this is a live demo, accuracy metrics are not calculated without true labels.")
