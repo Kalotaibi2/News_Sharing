@@ -90,8 +90,12 @@ category_map = {0: "Low", 1: "Medium", 2: "High"}
 predicted_categories = [category_map [pred] for pred in predictions]
 
 # Display results in a user-friendly way
-st.write("Predicted Share Categories (Low, Medium, High):")
-st.write(predicted_categories)
+# If the predictions list contains only one element, display it directly
+if len(predicted_categories) == 1:
+    st.write(f"Predicted Share Category: {predicted_categories[0]}")
+else:
+    st.write("Predicted Share Categories (Low, Medium, High):")
+    st.write(predicted_categories)
 
 # Since this is a live demo, accuracy metrics can't be calculated unless there is labeled data
 st.write("Note: Since this is a live demo, accuracy metrics are not calculated without true labels.")
