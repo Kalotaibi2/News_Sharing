@@ -31,7 +31,15 @@ def preprocess_data(input_data):
     # Ensure column names are clean
     input_data_df.columns = input_data_df.columns.str.strip()  # Strip any leading/trailing spaces
     
+    # Define the expected columns (after removing "Average Keyword Performance")
+    expected_columns = ["n_tokens_title", "n_tokens_content", "num_hrefs", "num_imgs"]
     
+    # Check if any of the expected columns are missing
+    missing_columns = [col for col in expected_columns if col not in input_data_df.columns]
+    
+    if missing_columns:
+        st.error(f"Uploaded file is missing columns: {', '.join(missing_columns)}")
+        return None  # If there are missing columns, stop further processing
 
     # Ensure the correct column order
     input_data_df = input_data_df[expected_columns]
