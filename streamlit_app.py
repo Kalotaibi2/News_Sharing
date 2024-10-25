@@ -21,7 +21,10 @@ input_method = st.sidebar.radio("Choose input method:", ["Manual Input", "Upload
 
 # Function to preprocess data (manual input or from CSV)
 def preprocess_data(input_data):
-    numeric_data = input_data
+    # Convert input to DataFrame and strip spaces in column names
+    input_data_df = pd.DataFrame([input_data])
+    input_data_df.columns = input_data_df.columns.str.strip()  # Ensure no leading/trailing spaces
+    input_data_df = input_data_df[scaler.feature_names_in_]  # Ensure same column order and names as training
 
     # Apply scaling, interaction terms, and dimensionality reduction
     data_scaled = scaler.transform(numeric_data)
