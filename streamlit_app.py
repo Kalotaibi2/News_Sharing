@@ -87,7 +87,7 @@ else:
 
 # Map numerical predictions to readable categories
 category_map = {0: "Low", 1: "Medium", 2: "High"}
-predicted_categories = [category_map[pred] for pred in predictions]
+predicted_categories = category_map[pred] for pred in predictions
 
 # Display results in a user-friendly way
 st.write("Predicted Share Categories (Low, Medium, High):")
