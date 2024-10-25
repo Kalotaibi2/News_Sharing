@@ -20,7 +20,6 @@ st.sidebar.title("Input Method")
 input_method = st.sidebar.radio("Choose input method:", ["Manual Input", "Upload CSV"])
 
 # Function to preprocess data (manual input or from CSV)
-# Function to preprocess data (manual input or from CSV)
 def preprocess_data(input_data):
     # If input_data is a dictionary (manual input), convert it to DataFrame; otherwise, assume it's already a DataFrame
     if isinstance(input_data, dict):
@@ -31,7 +30,7 @@ def preprocess_data(input_data):
     # Ensure column names are clean
     input_data_df.columns = input_data_df.columns.str.strip()  # Strip any leading/trailing spaces
     
-    # Define the expected columns (after removing "Average Keyword Performance")
+    # Define the expected columns 
     expected_columns = ["n_tokens_title", "n_tokens_content", "num_hrefs", "num_imgs"]
     
     # Check if any of the expected columns are missing
@@ -45,11 +44,16 @@ def preprocess_data(input_data):
     input_data_df = input_data_df[expected_columns]
     
     # Apply scaling, interaction terms, and dimensionality reduction (from trained models)
-    data_scaled = scaler.transform(input_data_df)
-    data_poly = poly.transform(data_scaled)
-    data_reduced = fld.transform(data_poly)
+    try:
+        data_scaled = scaler.transform(input_data_df)
+        data_poly = poly.transform(data_scaled)
+        data_reduced = fld.transform(data_poly)
+    except Exception as e:
+        st.error(f"Error during preprocessing: {e}")
+        return None
     
     return data_reduced
+
 
 # Option 1: Manual Input
 if input_method == "Manual Input":
@@ -83,32 +87,32 @@ elif input_method == "Upload CSV":
         # Preprocess the uploaded data
         processed_data = preprocess_data(input_data)
 
-# Model Selection
-st.sidebar.title("Choose Model")
-model_choice = st.sidebar.selectbox("Select a model:", ["Logistic Regression", "LDA", "Neural Network"])
-
-# Make predictions based on model choice
+# Check if processed data is available before making predictions
 if processed_data is not None:
+    # Model Selection
+    st.sidebar.title("Choose Model")
+    model_choice = st.sidebar.selectbox("Select a model:", ["Logistic Regression", "LDA", "Neural Network"])
+
+    # Make predictions based on model choice
     if model_choice == "Logistic Regression":
         predictions = log_reg_model.predict(processed_data)
     elif model_choice == "LDA":
         predictions = lda_model.predict(processed_data)
     else:
         predictions = nn_model.predict(processed_data)
+
+    # Map numerical predictions to readable categories
+    category_map = {0: "Low", 1: "Medium", 2: "High"}
+    predicted_categories = [category_map[pred] for pred in predictions]
+
+    # If the predictions list contains only one element, display it directly
+    if len(predicted_categories) == 1:
+        st.write(f"Predicted Share Category: {predicted_categories[0]}")
+    else:
+        st.write("Predicted Share Categories (Low, Medium, High):")
+        st.write(predicted_categories)
+
 else:
     st.warning("Please upload a valid file or input correct data.")
 
-# Map numerical predictions to readable categories
-category_map = {0: "Low", 1: "Medium", 2: "High"}
-predicted_categories = [category_map [pred] for pred in predictions]
 
-# Display results in a user-friendly way
-# If the predictions list contains only one element, display it directly
-if len(predicted_categories) == 1:
-    st.write(f"Predicted Share Category: {predicted_categories[0]}")
-else:
-    st.write("Predicted Share Categories (Low, Medium, High):")
-    st.write(predicted_categories)
-
-# Since this is a live demo, accuracy metrics can't be calculated unless there is labeled data
-st.write("Note: Since this is a live demo, accuracy metrics are not calculated without true labels.")
