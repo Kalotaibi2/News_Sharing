@@ -19,6 +19,7 @@ st.title("News Sharing Prediction App")
 st.sidebar.title("Input Method")
 input_method = st.sidebar.radio("Choose input method:", ["Manual Input", "Upload CSV"])
 
+
 # Function to preprocess data (manual input or from CSV)
 def preprocess_data(input_data):
     try:
@@ -27,11 +28,11 @@ def preprocess_data(input_data):
             input_data_df = pd.DataFrame([input_data])  # Convert dictionary to DataFrame (manual input)
         else:
             input_data_df = input_data  # Already a DataFrame (CSV file)
-        
+
         # Ensure column names are clean
         input_data_df.columns = input_data_df.columns.str.strip()  # Strip any leading/trailing spaces
-        
-        # Define the expected columns (after removing "Average Keyword Performance")
+
+        # Define only the columns expected by the model 
         expected_columns = ["n_tokens_title", "n_tokens_content", "num_hrefs", "num_imgs"]
         
         # Check if any of the expected columns are missing
@@ -41,7 +42,7 @@ def preprocess_data(input_data):
             st.error(f"Uploaded file is missing columns: {', '.join(missing_columns)}")
             return None  # If there are missing columns, stop further processing
 
-        # Ensure the correct column order
+        # Ensure the correct column order and exclude irrelevant features
         input_data_df = input_data_df[expected_columns]
         
         # Apply scaling, interaction terms, and dimensionality reduction (from trained models)
@@ -53,6 +54,7 @@ def preprocess_data(input_data):
     except Exception as e:
         st.error(f"Error during preprocessing: {e}")
         return None
+
 
 # Initialize processed_data to prevent undefined errors
 processed_data = None
