@@ -42,14 +42,14 @@ if input_method == "Manual Input":
     num_imgs = st.number_input('Number of Images', min_value=0)
     kw_avg_avg = st.number_input('Average Keyword Performance', min_value=0.0)
 
-    # Create a DataFrame from user inputs
-    input_data = pd.DataFrame({
-        'n_tokens_title': [n_tokens_title],
-        'n_tokens_content': [n_tokens_content],
-        'num_hrefs': [num_hrefs],
-        'num_imgs': [num_imgs],
-        'kw_avg_avg': [kw_avg_avg]
-    })
+    # Collect user inputs in Streamlit
+    input_data = {
+        "n_tokens_title": n_tokens_title,
+        "n_tokens_content": n_tokens_content,
+        "num_hrefs": num_hrefs,
+        "num_imgs": num_imgs,
+        "kw_avg_avg": kw_avg_avg,
+    }
 
     # Preprocess the input data
     processed_data = preprocess_data(input_data)
