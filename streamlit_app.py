@@ -32,17 +32,15 @@ def preprocess_data(input_data):
         # Ensure column names are clean
         input_data_df.columns = input_data_df.columns.str.strip()  # Strip any leading/trailing spaces
 
-        # Define only the columns expected by the model 
-        expected_columns = ["n_tokens_title", "n_tokens_content", "num_hrefs", "num_imgs"]
-        
-        # Check if any of the expected columns are missing
-        missing_columns = [col for col in expected_columns if col not in input_data_df.columns]
-        
-        if missing_columns:
-            st.error(f"Uploaded file is missing columns: {', '.join(missing_columns)}")
-            return None  # If there are missing columns, stop further processing
+        # Get the original feature names expected by scaler during training
+        expected_columns = scaler.feature_names_in_
 
-        # Ensure the correct column order and exclude irrelevant features
+        # Check and add any missing columns to the input data with a default value of 0
+        for column in expected_columns:
+            if column not in input_data_df.columns:
+                input_data_df[column] = 0  # Add missing columns with zero values
+
+        # Reorder columns to match the expected order
         input_data_df = input_data_df[expected_columns]
         
         # Apply scaling, interaction terms, and dimensionality reduction (from trained models)
