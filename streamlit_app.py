@@ -23,7 +23,7 @@ st.title("News Sharing Prediction App")
 st.sidebar.title("Input Method")
 input_method = st.sidebar.radio("Choose input method:", ["Manual Input", "Upload CSV"])
 
-# Function to preprocess data
+# Function to preprocess data with debug prints
 def preprocess_data(input_data):
     # Define all expected feature names
     expected_features = [
@@ -46,12 +46,17 @@ def preprocess_data(input_data):
 
     input_data_df = input_data_df[expected_features]
     
+    # Print to debug feature names
+    print("Expected features for scaling:", expected_features)
+    print("Features in input data before scaling:", input_data_df.columns.tolist())
+    
     # Apply scaling, polynomial features, and dimensionality reduction
     data_scaled = scaler.transform(input_data_df)
     data_poly = poly.transform(data_scaled)
     data_reduced = fld.transform(data_poly)
     
     return data_reduced
+
 
 # Option 1: Manual Input
 if input_method == "Manual Input":
