@@ -25,6 +25,12 @@ input_method = st.sidebar.radio("Choose input method:", ["Manual Input", "Upload
 
 # Function to preprocess data
 def preprocess_data(input_data):
+    # Define all expected feature names
+    expected_features = [
+        'n_tokens_content', 'num_hrefs', 'num_imgs', 'self_reference_avg_sharess',
+        'kw_avg_avg', 'kw_max_avg', 'LDA_02', 'LDA_03', 'data_channel_is_world'
+    ]
+    
     # Convert input to DataFrame if manual input
     if isinstance(input_data, dict):
         input_data_df = pd.DataFrame([input_data])
@@ -33,15 +39,12 @@ def preprocess_data(input_data):
 
     input_data_df.columns = input_data_df.columns.str.strip()
 
-    # Define the expected columns for derived features computation
-    expected_columns = ['n_tokens_content', 'num_hrefs', 'num_imgs', 'self_reference_avg_sharess']
-
     # Ensure correct columns and fill missing ones with default values
-    for col in expected_columns:
-        if col not in input_data_df.columns:
-            input_data_df[col] = avg_self_reference_shares if col == 'self_reference_avg_sharess' else 0
+    for feature in expected_features:
+        if feature not in input_data_df.columns:
+            input_data_df[feature] = avg_self_reference_shares if feature == 'self_reference_avg_sharess' else 0
 
-    input_data_df = input_data_df[expected_columns]
+    input_data_df = input_data_df[expected_features]
     
     # Apply scaling, polynomial features, and dimensionality reduction
     data_scaled = scaler.transform(input_data_df)
