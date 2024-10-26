@@ -112,11 +112,16 @@ else:
 # Validation Note
 st.write("Note: These results are based on the trained models. For validation, results may vary when using different data samples.")
 
-# Visualize Outlier Handling for Documentation
-st.subheader("Outlier Visualization")
+# Check column names in the CSV file
+data = pd.read_csv("OnlineNewsPopularity.csv")
+st.write("Columns in the dataset:", data.columns.tolist())
+
+# Define outlier features after verifying the exact column names
 outlier_features = ['n_tokens_content', 'num_hrefs', 'num_imgs', 'shares']
+
+# Visualize outliers using the verified feature list
 fig, ax = plt.subplots(figsize=(10, 6))
-sns.boxplot(data=pd.read_csv("OnlineNewsPopularity.csv")[outlier_features], ax=ax)
+sns.boxplot(data=data[outlier_features], ax=ax)
 ax.set_title("Boxplot of Key Features to Identify Outliers")
 ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
 st.pyplot(fig)
