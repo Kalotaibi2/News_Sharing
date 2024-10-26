@@ -61,12 +61,24 @@ if input_method == "Manual Input":
     n_tokens_content = st.number_input('Number of Words in Content', min_value=0)
     num_hrefs = st.number_input('Number of Hyperlinks', min_value=0)
     num_imgs = st.number_input('Number of Images', min_value=0)
+    self_reference_min_shares = st.number_input('Minimum Self Reference Shares', min_value=0)
+    kw_avg_avg = st.number_input('Average Keyword Weight', min_value=0.0)
+    kw_max_avg = st.number_input('Maximum Keyword Average', min_value=0.0)
+    data_channel_is_world = st.number_input('Data Channel Is World (0 or 1)', min_value=0, max_value=1)
+    LDA_02 = st.number_input('LDA Topic 02', min_value=0.0)
+    LDA_03 = st.number_input('LDA Topic 03', min_value=0.0)
 
     input_data = {
         'n_tokens_content': n_tokens_content,
         'num_hrefs': num_hrefs,
         'num_imgs': num_imgs,
         'self_reference_avg_sharess': avg_self_reference_shares,
+        'self_reference_min_shares': self_reference_min_shares,
+        'kw_avg_avg': kw_avg_avg,
+        'kw_max_avg': kw_max_avg,
+        'data_channel_is_world': data_channel_is_world,
+        'LDA_02': LDA_02,
+        'LDA_03': LDA_03,
     }
     
     processed_data = preprocess_data(input_data)
@@ -89,7 +101,7 @@ model_choice = st.sidebar.selectbox(
     "Select a model:", ["Decision Tree", "Naive Bayes", "Random Forest"])
 
 # Make predictions based on model choice
-if processed_data is not None:
+if 'processed_data' in locals():
     if model_choice == "Decision Tree":
         predictions = decision_tree_model.predict(processed_data)
     elif model_choice == "Naive Bayes":
@@ -112,11 +124,12 @@ else:
 # Validation Note
 st.write("Note: These results are based on the trained models. For validation, results may vary when using different data samples.")
 
-# Check column names in the CSV file
+# Visualize outliers in specific features for documentation
+st.subheader("Outlier Visualization")
 data = pd.read_csv("OnlineNewsPopularity.csv")
-st.write("Columns in the dataset:", data.columns.tolist())
+data.columns = data.columns.str.strip()  # Ensure column names match
 
-# Define outlier features after verifying the exact column names
+# Define the outlier features after verifying the exact column names
 outlier_features = ['n_tokens_content', 'num_hrefs', 'num_imgs', 'shares']
 
 # Visualize outliers using the verified feature list
