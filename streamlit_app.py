@@ -11,9 +11,9 @@ import seaborn as sns
 scaler = joblib.load('scaler.pkl')
 poly = joblib.load('poly_model.pkl')
 fld = joblib.load('fld_model.pkl')
-decision_tree_model = joblib.load('Decision_Tree_model.pkl')
-naive_bayes_model = joblib.load('Naive_Bayes_model.pkl')
-random_forest_model = joblib.load('Random_Forest_model.pkl')
+decision_tree_model = joblib.load('Decision Tree_model.pkl')
+naive_bayes_model = joblib.load('Naive Bayes_model.pkl')
+random_forest_model = joblib.load('Random Forest_model.pkl')
 
 # Streamlit App
 st.title("News Sharing Prediction App")
@@ -30,9 +30,8 @@ def preprocess_data(input_data):
 
     input_data_df.columns = input_data_df.columns.str.strip()
 
-    # Define the expected columns after feature selection
-    expected_columns = ['kw_avg_avg', 'LDA_03', 'kw_max_avg', 
-                        'self_reference_avg_sharess', 'num_hrefs', 'num_imgs']
+    # Define the expected columns for derived features computation
+    expected_columns = ['n_tokens_content', 'num_hrefs', 'num_imgs', 'self_reference_avg_sharess']
 
     # Ensure correct columns and fill missing ones with default values
     for col in expected_columns:
@@ -48,23 +47,24 @@ def preprocess_data(input_data):
     
     return data_reduced
 
+#avg_self_reference_shares is calculated as the mean from the training set:
+avg_self_reference_shares = training_data['self_reference_avg_sharess'].mean()
+
+# Replace 'self_reference_avg_sharess' with this calculated value:
+input_data['self_reference_avg_sharess'] = avg_self_reference_shares
 # Option 1: Manual Input
 if input_method == "Manual Input":
-    st.write("Enter values for selected features:")
-    kw_avg_avg = st.number_input('Average Keyword Weight', min_value=0.0)
-    LDA_03 = st.number_input('LDA_03', min_value=0.0)
-    kw_max_avg = st.number_input('Maximum Keyword Average', min_value=0.0)
-    self_reference_avg_sharess = st.number_input('Average Self Reference Shares', min_value=0.0)
+    st.write("Enter basic article features:")
+    n_tokens_content = st.number_input('Number of Words in Content', min_value=0)
     num_hrefs = st.number_input('Number of Hyperlinks', min_value=0)
     num_imgs = st.number_input('Number of Images', min_value=0)
     
+
     input_data = {
-        'kw_avg_avg': kw_avg_avg,
-        'LDA_03': LDA_03,
-        'kw_max_avg': kw_max_avg,
-        'self_reference_avg_sharess': self_reference_avg_sharess,
+        'n_tokens_content': n_tokens_content,
         'num_hrefs': num_hrefs,
-        'num_imgs': num_imgs
+        'num_imgs': num_imgs,
+        'self_reference_avg_sharess': self_reference_avg_sharess,
     }
     
     processed_data = preprocess_data(input_data)
