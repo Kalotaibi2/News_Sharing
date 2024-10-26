@@ -15,6 +15,9 @@ decision_tree_model = joblib.load('Decision_Tree_model.pkl')
 naive_bayes_model = joblib.load('Naive_Bayes_model.pkl')
 random_forest_model = joblib.load('Random_Forest_model.pkl')
 
+# Precomputed average self_reference_avg_sharess from the training set
+avg_self_reference_shares = 3395  # Replace with the actual computed value from training
+
 # Streamlit App
 st.title("News Sharing Prediction App")
 st.sidebar.title("Input Method")
@@ -36,7 +39,7 @@ def preprocess_data(input_data):
     # Ensure correct columns and fill missing ones with default values
     for col in expected_columns:
         if col not in input_data_df.columns:
-            input_data_df[col] = 0
+            input_data_df[col] = avg_self_reference_shares if col == 'self_reference_avg_sharess' else 0
 
     input_data_df = input_data_df[expected_columns]
     
@@ -47,24 +50,18 @@ def preprocess_data(input_data):
     
     return data_reduced
 
-#avg_self_reference_shares is calculated as the mean from the training set:
-avg_self_reference_shares = training_data['self_reference_avg_sharess'].mean()
-
-# Replace 'self_reference_avg_sharess' with this calculated value:
-input_data['self_reference_avg_sharess'] = avg_self_reference_shares
 # Option 1: Manual Input
 if input_method == "Manual Input":
     st.write("Enter basic article features:")
     n_tokens_content = st.number_input('Number of Words in Content', min_value=0)
     num_hrefs = st.number_input('Number of Hyperlinks', min_value=0)
     num_imgs = st.number_input('Number of Images', min_value=0)
-    
 
     input_data = {
         'n_tokens_content': n_tokens_content,
         'num_hrefs': num_hrefs,
         'num_imgs': num_imgs,
-        'self_reference_avg_sharess': self_reference_avg_sharess,
+        'self_reference_avg_sharess': avg_self_reference_shares,
     }
     
     processed_data = preprocess_data(input_data)
