@@ -9,8 +9,8 @@ from PIL import Image
 # Load pre-trained models and preprocessing objects
 scaler = joblib.load('scaler.pkl')
 poly = joblib.load('poly_model.pkl')
-decision_tree_model = joblib.load('Decision_Tree_model.pkl')
-naive_bayes_model = joblib.load('Naive_Bayes_model.pkl')
+gradient_boosting_model = joblib.load('Gradient_Boosting_model.pkl')
+neural_network_model = joblib.load('Neural_Network_model.pkl')
 random_forest_model = joblib.load('Random_Forest_model.pkl')
 
 # Precomputed average self_reference_avg_sharess from the training set
@@ -118,14 +118,14 @@ elif input_method == "View Preprocessing Results":
 
 # Model Selection for prediction
 st.sidebar.title("Choose Model")
-model_choice = st.sidebar.selectbox("Select a model:", ["Decision Tree", "Naive Bayes", "Random Forest"])
+model_choice = st.sidebar.selectbox("Select a model:", ["Gradient Boosting", "Neural Network", "Random Forest"])
 
 # Make predictions based on the selected model
 if 'processed_data' in locals():
-    if model_choice == "Decision Tree":
-        predictions = decision_tree_model.predict(processed_data)
-    elif model_choice == "Naive Bayes":
-        predictions = naive_bayes_model.predict(processed_data)
+    if model_choice == "Gradient Boosting":
+        predictions = gradient_boosting_model.predict(processed_data)
+    elif model_choice == "Neural Network":
+        predictions = neural_network_model.predict(processed_data)
     elif model_choice == "Random Forest":
         predictions = random_forest_model.predict(processed_data)
 
