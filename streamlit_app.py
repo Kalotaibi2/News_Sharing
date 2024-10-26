@@ -23,12 +23,13 @@ st.title("News Sharing Prediction App")
 st.sidebar.title("Input Method")
 input_method = st.sidebar.radio("Choose input method:", ["Manual Input", "Upload CSV"])
 
-# Function to preprocess data with debug prints
+# Function to preprocess data with feature consistency check
 def preprocess_data(input_data):
-    # Define all expected feature names
+    # Define all expected feature names based on the trained model
     expected_features = [
-        'n_tokens_content', 'num_hrefs', 'num_imgs', 'self_reference_avg_sharess',
-        'kw_avg_avg', 'kw_max_avg', 'LDA_02', 'LDA_03', 'data_channel_is_world'
+        'kw_avg_avg', 'LDA_03', 'kw_max_avg', 'self_reference_avg_sharess',
+        'self_reference_min_shares', 'data_channel_is_world', 'LDA_02',
+        'num_hrefs', 'num_imgs'
     ]
     
     # Convert input to DataFrame if manual input
@@ -42,13 +43,10 @@ def preprocess_data(input_data):
     # Ensure correct columns and fill missing ones with default values
     for feature in expected_features:
         if feature not in input_data_df.columns:
-            input_data_df[feature] = avg_self_reference_shares if feature == 'self_reference_avg_sharess' else 0
+            input_data_df[feature] = 0  # Fill missing columns with default values
 
+    # Reorder columns to match the order used during training
     input_data_df = input_data_df[expected_features]
-    
-    # Print to debug feature names
-    print("Expected features for scaling:", expected_features)
-    print("Features in input data before scaling:", input_data_df.columns.tolist())
     
     # Apply scaling, polynomial features, and dimensionality reduction
     data_scaled = scaler.transform(input_data_df)
@@ -56,7 +54,6 @@ def preprocess_data(input_data):
     data_reduced = fld.transform(data_poly)
     
     return data_reduced
-
 
 # Option 1: Manual Input
 if input_method == "Manual Input":
