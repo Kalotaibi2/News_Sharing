@@ -11,9 +11,9 @@ import seaborn as sns
 scaler = joblib.load('scaler.pkl')
 poly = joblib.load('poly_model.pkl')
 fld = joblib.load('fld_model.pkl')
-decision_tree_model = joblib.load('Decision Tree_model.pkl')
-naive_bayes_model = joblib.load('Naive Bayes_model.pkl')
-random_forest_model = joblib.load('Random Forest_model.pkl')
+decision_tree_model = joblib.load('Decision_Tree_model.pkl')
+naive_bayes_model = joblib.load('Naive_Bayes_model.pkl')
+random_forest_model = joblib.load('Random_Forest_model.pkl')
 
 # Streamlit App
 st.title("News Sharing Prediction App")
