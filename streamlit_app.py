@@ -15,8 +15,14 @@ decision_tree_model = joblib.load('Decision_Tree_model.pkl')
 naive_bayes_model = joblib.load('Naive_Bayes_model.pkl')
 random_forest_model = joblib.load('Random_Forest_model.pkl')
 
-# Precomputed average self_reference_avg_sharess from the training set
-avg_self_reference_shares = 3395  # Replace with the actual computed value from training
+# Precomputed average self_reference_avg_sharess and other default values
+avg_self_reference_shares = 3395
+default_self_reference_min_shares = 200  # Replace with the mean from training data
+default_kw_avg_avg = 0.5
+default_kw_max_avg = 0.8
+default_data_channel_is_world = 0
+default_LDA_02 = 0.2
+default_LDA_03 = 0.3
 
 # Streamlit App
 st.title("News Sharing Prediction App")
@@ -61,24 +67,18 @@ if input_method == "Manual Input":
     n_tokens_content = st.number_input('Number of Words in Content', min_value=0)
     num_hrefs = st.number_input('Number of Hyperlinks', min_value=0)
     num_imgs = st.number_input('Number of Images', min_value=0)
-    self_reference_min_shares = st.number_input('Minimum Self Reference Shares', min_value=0)
-    kw_avg_avg = st.number_input('Average Keyword Weight', min_value=0.0)
-    kw_max_avg = st.number_input('Maximum Keyword Average', min_value=0.0)
-    data_channel_is_world = st.number_input('Data Channel Is World (0 or 1)', min_value=0, max_value=1)
-    LDA_02 = st.number_input('LDA Topic 02', min_value=0.0)
-    LDA_03 = st.number_input('LDA Topic 03', min_value=0.0)
 
     input_data = {
         'n_tokens_content': n_tokens_content,
         'num_hrefs': num_hrefs,
         'num_imgs': num_imgs,
         'self_reference_avg_sharess': avg_self_reference_shares,
-        'self_reference_min_shares': self_reference_min_shares,
-        'kw_avg_avg': kw_avg_avg,
-        'kw_max_avg': kw_max_avg,
-        'data_channel_is_world': data_channel_is_world,
-        'LDA_02': LDA_02,
-        'LDA_03': LDA_03,
+        'self_reference_min_shares': default_self_reference_min_shares,
+        'kw_avg_avg': default_kw_avg_avg,
+        'kw_max_avg': default_kw_max_avg,
+        'data_channel_is_world': default_data_channel_is_world,
+        'LDA_02': default_LDA_02,
+        'LDA_03': default_LDA_03,
     }
     
     processed_data = preprocess_data(input_data)
