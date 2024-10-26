@@ -2,22 +2,20 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
-from sklearn.preprocessing import StandardScaler, PolynomialFeatures
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 import matplotlib.pyplot as plt
 import seaborn as sns
+from PIL import Image
 
 # Load pre-trained models and preprocessing objects
 scaler = joblib.load('scaler.pkl')
 poly = joblib.load('poly_model.pkl')
-fld = joblib.load('fld_model.pkl')
 decision_tree_model = joblib.load('Decision_Tree_model.pkl')
 naive_bayes_model = joblib.load('Naive_Bayes_model.pkl')
 random_forest_model = joblib.load('Random_Forest_model.pkl')
 
-# Precomputed average self_reference_avg_sharess and other default values
+# Precomputed average self_reference_avg_sharess from the training set
 avg_self_reference_shares = 3395
-default_self_reference_min_shares = 200  # Replace with the mean from training data
+default_self_reference_min_shares = 200
 default_kw_avg_avg = 0.5
 default_kw_max_avg = 0.8
 default_data_channel_is_world = 0
@@ -27,39 +25,29 @@ default_LDA_03 = 0.3
 # Streamlit App
 st.title("News Sharing Prediction App")
 st.sidebar.title("Input Method")
-input_method = st.sidebar.radio("Choose input method:", ["Manual Input", "Upload CSV"])
+input_method = st.sidebar.radio("Choose input method:", ["Manual Input", "Upload CSV", "View Preprocessing Results"])
 
 # Function to preprocess data with feature consistency check
 def preprocess_data(input_data):
-    # Define all expected feature names based on the trained model
     expected_features = [
         'kw_avg_avg', 'LDA_03', 'kw_max_avg', 'self_reference_avg_sharess',
         'self_reference_min_shares', 'data_channel_is_world', 'LDA_02',
         'num_hrefs', 'num_imgs'
     ]
-    
-    # Convert input to DataFrame if manual input
     if isinstance(input_data, dict):
         input_data_df = pd.DataFrame([input_data])
     else:
         input_data_df = input_data
 
     input_data_df.columns = input_data_df.columns.str.strip()
-
-    # Ensure correct columns and fill missing ones with default values
     for feature in expected_features:
         if feature not in input_data_df.columns:
             input_data_df[feature] = 0  # Fill missing columns with default values
 
-    # Reorder columns to match the order used during training
     input_data_df = input_data_df[expected_features]
-    
-    # Apply scaling, polynomial features, and dimensionality reduction
     data_scaled = scaler.transform(input_data_df)
     data_poly = poly.transform(data_scaled)
-    data_reduced = fld.transform(data_poly)
-    
-    return data_reduced
+    return data_poly
 
 # Option 1: Manual Input
 if input_method == "Manual Input":
@@ -86,21 +74,53 @@ if input_method == "Manual Input":
 # Option 2: Upload CSV
 elif input_method == "Upload CSV":
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
-    
     if uploaded_file is not None:
         input_data = pd.read_csv(uploaded_file)
         st.write("Uploaded data preview:")
         st.write(input_data.head())
-        
-        # Preprocess the uploaded data
         processed_data = preprocess_data(input_data)
 
-# Model Selection
-st.sidebar.title("Choose Model")
-model_choice = st.sidebar.selectbox(
-    "Select a model:", ["Decision Tree", "Naive Bayes", "Random Forest"])
+# Option 3: View Preprocessing Results
+elif input_method == "View Preprocessing Results":
+    st.subheader("Preprocessing Steps and Visualizations")
 
-# Make predictions based on model choice
+    # Overview Button: Display first 5 rows and a brief description
+    if st.button("Overview"):
+        data = pd.read_csv("OnlineNewsPopularity.csv")
+        st.write("Dataset Overview:")
+        st.write(data.head())
+        st.write("This dataset includes various features about news articles and their popularity in terms of shares.")
+
+    # Correlation Button: Display correlation heatmap
+    if st.button("Correlation"):
+        st.write("Correlation Matrix of Selected Features")
+        image = Image.open('correlation_matrix.png')
+        st.image(image, caption='Correlation Matrix', use_column_width=True)
+
+    # Threshold Button: Display thresholds for categorization
+    if st.button("Threshold"):
+        with open('categorize_thresholds.txt', 'r') as file:
+            thresholds = file.read()
+        st.write("Thresholds for Categorization:")
+        st.text(thresholds)
+
+    # Outlier Button: Display boxplot for outliers
+    if st.button("Outliers"):
+        st.write("Outlier Visualization")
+        outlier_image = Image.open('outlier_visualization.png')
+        st.image(outlier_image, caption='Boxplot of Key Features to Identify Outliers', use_column_width=True)
+
+    # Evolution Button: Comparison of models' performance
+    if st.button("Model Evolution"):
+        st.write("Model Performance Comparison")
+        results_df = pd.read_csv('model_evaluation_results.csv')
+        st.write(results_df)
+
+# Model Selection for prediction
+st.sidebar.title("Choose Model")
+model_choice = st.sidebar.selectbox("Select a model:", ["Decision Tree", "Naive Bayes", "Random Forest"])
+
+# Make predictions based on the selected model
 if 'processed_data' in locals():
     if model_choice == "Decision Tree":
         predictions = decision_tree_model.predict(processed_data)
@@ -121,20 +141,5 @@ if 'processed_data' in locals():
 else:
     st.warning("Please upload a valid file or input correct data.")
 
-# Validation Note
-st.write("Note: These results are based on the trained models. For validation, results may vary when using different data samples.")
-
-# Visualize outliers in specific features for documentation
-st.subheader("Outlier Visualization")
-data = pd.read_csv("OnlineNewsPopularity.csv")
-data.columns = data.columns.str.strip()  # Ensure column names match
-
-# Define the outlier features after verifying the exact column names
-outlier_features = ['n_tokens_content', 'num_hrefs', 'num_imgs', 'shares']
-
-# Visualize outliers using the verified feature list
-fig, ax = plt.subplots(figsize=(10, 6))
-sns.boxplot(data=data[outlier_features], ax=ax)
-ax.set_title("Boxplot of Key Features to Identify Outliers")
-ax.set_xticklabels(ax.get_xticklabels(), rotation=45)
-st.pyplot(fig)
+# Note
+st.write("Note: These results are based on the trained models and precomputed analysis. Live predictions will vary with new data.")
