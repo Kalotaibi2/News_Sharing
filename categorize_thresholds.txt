@@ -1,0 +1,2 @@
+Low Threshold: 1100.0
+High Threshold: 2100.0
