@@ -13,14 +13,14 @@ gradient_boosting_model = joblib.load('Gradient_Boosting_model.pkl')
 neural_network_model = joblib.load('Neural_Network_model.pkl')
 random_forest_model = joblib.load('Random_Forest_model.pkl')
 
-# Precomputed average self_reference_avg_sharess from the training set
-avg_self_reference_shares = 3395
-default_self_reference_min_shares = 200
-default_kw_avg_avg = 0.5
-default_kw_max_avg = 0.8
-default_data_channel_is_world = 0
-default_LDA_02 = 0.2
-default_LDA_03 = 0.3
+# Precomputed averages from the training set
+avg_self_reference_shares = 6401.697579821467
+default_self_reference_min_shares = 3998.7553955201292
+default_kw_avg_avg = 3135.8586389465236
+default_kw_max_avg = 5657.211151064957
+default_data_channel_is_world = 0.21256684491978609
+default_LDA_02 = 0.21632096677306634
+default_LDA_03 = 0.22376961651356772
 
 # Streamlit App
 st.title("News Sharing Prediction App")
