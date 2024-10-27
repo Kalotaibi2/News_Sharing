@@ -89,13 +89,21 @@ elif input_method == "View Preprocessing Results":
         data = pd.read_csv("OnlineNewsPopularity.csv")
         st.write("Dataset Overview:")
         st.write(data.head())
-        st.write("This dataset includes various features about news articles and their popularity in terms of shares.")
+        st.write("This dataset includes 39,644 rows and 61 features (including the target variable 'shares').")
+        st.write("It is used for predicting the popularity of news articles based on various features like the number of words, images, and other metadata.")
+        st.write("Most features are continuous variables (e.g., 'n_tokens_content', 'num_hrefs', 'data_channel_is_world').")
+        st.write("The target variable, 'shares', is continuous but has been categorized for this analysis.")
 
+    
     # Correlation Button: Display correlation heatmap
     if st.button("Correlation"):
         st.write("Correlation Matrix of Selected Features")
         image = Image.open('correlation_matrix.png')
         st.image(image, caption='Correlation Matrix', use_column_width=True)
+        st.write("This heatmap shows the correlation between selected features. High values (closer to 1 or -1) indicate a strong relationship between two features.")
+        st.write("For example, 'kw_avg_avg' and 'kw_max_avg' have a high positive correlation, indicating that as the average keyword weight increases, the maximum keyword average also tends to increase.")
+        st.write("Negative correlations (values closer to -1) suggest an inverse relationship between features.")
+
 
     # Threshold Button: Display thresholds for categorization
     if st.button("Threshold"):
@@ -109,6 +117,15 @@ elif input_method == "View Preprocessing Results":
         st.write("Outlier Visualization")
         outlier_image = Image.open('outlier_visualization.png')
         st.image(outlier_image, caption='Boxplot of Key Features to Identify Outliers', use_column_width=True)
+        st.write("The boxplot helps identify potential outliers in the selected features.")
+        st.write("Outlier thresholds based on 1st and 99th percentiles for each feature:")
+        st.write("""
+        - n_tokens_content: (0.0, 2256.14)
+        - num_hrefs: (0.0, 56.0)
+        - num_imgs: (0.0, 37.0)
+        - shares: (381.0, 31657.0)
+        """)
+        st.write("Values outside these ranges are considered outliers and were capped during preprocessing to ensure robustness of the models.")
 
     # Evolution Button: Comparison of models' performance
     if st.button("Model Evolution"):
