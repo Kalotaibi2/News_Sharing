@@ -176,5 +176,3 @@ else:
         st.warning("Please upload a valid file or input correct data.")
     
 
-# Note
-st.write("Note: These results are based on the trained models and precomputed analysis. Live predictions will vary with new data.")
