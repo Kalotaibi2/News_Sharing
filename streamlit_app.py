@@ -69,32 +69,15 @@ elif input_method == "Upload CSV":
     if uploaded_file is not None:
         # Step 1: Read the uploaded file
         input_data = pd.read_csv(uploaded_file)
-        input_data.columns = input_data.columns.str.strip()  # Ensure clean column names
         
         # Step 2: Display the uploaded data preview
         st.write("Uploaded data preview:")
         st.write(input_data.head())
+        input_data.columns = input_data.columns.str.strip()  # Ensure clean column names
+        
+        input_data = input_data[expected_columns]
 
-        # Step 3: Filter columns to match expected features
-        if set(expected_columns).issubset(input_data.columns):
-            input_data = input_data[expected_columns]
-        else:
-            st.error("Uploaded file is missing required features.")
-            st.stop()
-
-        # Step 4: Preprocess data inline (scaling and polynomial transformation)
-        try:
-            data_scaled = scaler.transform(input_data)
-            processed_data = poly.transform(data_scaled)
-            
-            # Step 5: Display processed data preview (optional for debugging)
-            st.write("Processed Uploaded CSV Data:")
-            st.write(pd.DataFrame(processed_data).head())  # Show first 5 rows of processed data
-        except Exception as e:
-            st.error("Error in processing the uploaded file. Ensure it matches the expected format.")
-            st.write(e)
-            
-            
+        processed_data = preprocess_data(input_data)
 
             
 # Option 3: View Preprocessing Results
