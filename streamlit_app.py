@@ -6,45 +6,76 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from PIL import Image
 
-
-# Load dataset and models
-data = pd.read_csv("OnlineNewsPopularity.csv")
-data.columns = data.columns.str.strip()  # Clean column names
-
+# Load pre-trained models and preprocessing objects
 scaler = joblib.load('scaler.pkl')
 poly = joblib.load('poly_model.pkl')
 gradient_boosting_model = joblib.load('Gradient_Boosting_model.pkl')
 neural_network_model = joblib.load('Neural_Network_model.pkl')
 random_forest_model = joblib.load('Random_Forest_model.pkl')
 
-# Pre-select relevant features
-selected_features = ['kw_avg_avg', 'LDA_03', 'kw_max_avg', 'self_reference_avg_sharess',
-                     'self_reference_min_shares', 'data_channel_is_world', 'LDA_02',
-                     'num_hrefs', 'num_imgs']
-data = data[selected_features]  # Filter to only include selected features
+# Precomputed averages from the training set
+#avg_self_reference_shares = 6401.697579821467
+#default_self_reference_min_shares = 3998.7553955201292
+#default_kw_avg_avg = 3135.8586389465236
+#default_kw_max_avg = 5657.211151064957
+#default_data_channel_is_world = 0.21256684491978609
+#default_LDA_02 = 0.21632096677306634
+#default_LDA_03 = 0.22376961651356772
 
-# Function to preprocess data
-def preprocess_data(input_data_df):
+# Streamlit App
+st.title("News Sharing Prediction App")
+st.sidebar.title("Input Method")
+input_method = st.sidebar.radio("Choose input method:", ["Manual Input", "Upload CSV", "View Preprocessing Results"])
+
+# Function to preprocess data with feature consistency check
+def preprocess_data(input_data):
+    expected_features = [
+        'kw_avg_avg', 'LDA_03', 'kw_max_avg', 'self_reference_avg_sharess',
+        'self_reference_min_shares', 'data_channel_is_world', 'LDA_02',
+        'num_hrefs', 'num_imgs'
+    ]
+    if isinstance(input_data, dict):
+        input_data_df = pd.DataFrame([input_data])
+    else:
+        input_data_df = input_data
+
+    input_data_df.columns = input_data_df.columns.str.strip()
+    for feature in expected_features:
+        if feature not in input_data_df.columns:
+            input_data_df[feature] = 0  # Fill missing columns with default values
+
+    input_data_df = input_data_df[expected_features]
     data_scaled = scaler.transform(input_data_df)
     data_poly = poly.transform(data_scaled)
     return data_poly
 
-st.title("News Sharing Prediction App")
-input_method = st.sidebar.radio("Choose input method:", ["Enter ID", "Select Record from List", "Manual Input"])
+# Option 1: Manual Input
+if input_method == "Manual Input":
+    st.write("Enter basic article features:")
+    n_tokens_content = st.number_input('Number of Words in Content', min_value=0)
+    num_hrefs = st.number_input('Number of Hyperlinks', min_value=0)
+    num_imgs = st.number_input('Number of Images', min_value=0)
 
-# Option 1: Enter ID
-if input_method == "Enter ID":
-    st.write("Enter an ID to populate feature values:")
-    id_input = st.number_input("ID Number", min_value=0, max_value=len(data)-1, step=1)
+    input_data = {
+        'n_tokens_content': n_tokens_content,
+        'num_hrefs': num_hrefs,
+        'num_imgs': num_imgs,
+        'self_reference_avg_sharess': 0,
+        'self_reference_min_shares': 0,
+        'kw_avg_avg': 0,
+        'kw_max_avg': 0,
+        'data_channel_is_world': 0,
+        'LDA_02': 0,
+        'LDA_03': 0,
+    }
+    if st.button("Predict"):
+        #processed_data = preprocess_data(input_data)
+        # Process and predict
+        processed_data = preprocess_data(input_data)
+        st.write("Processed Manual Input Data:", processed_data)  # For debugging
+
     
-    if id_input is not None:
-        selected_record = data.iloc[int(id_input), :]  # Get row corresponding to ID
-        st.write("Selected Record Values:")
-        for feature in selected_features:
-            st.write(f"{feature}: {selected_record[feature]}")
-        processed_data = preprocess_data(pd.DataFrame([selected_record]))
-
-
+    
 # Option 2: Upload CSV
 elif input_method == "Upload CSV":
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
@@ -149,4 +180,3 @@ else:
     if input_method in ["Manual Input", "Upload CSV"]:
         st.warning("Please upload a valid file or input correct data.")
     
-
