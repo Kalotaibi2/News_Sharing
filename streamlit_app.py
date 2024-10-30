@@ -5,28 +5,39 @@ from PIL import Image
 
 # Load dataset and models
 data = pd.read_csv("OnlineNewsPopularity.csv")
-data.columns = data.columns.str.strip()  # Clean column names
+data.columns = data.columns.str.strip().str.replace(" ", "_")  # Clean column names
 
-# Define the expected columns globally so they're accessible throughout
+# Define the expected columns globally
 expected_columns = [
     'kw_avg_avg', 'LDA_03', 'kw_max_avg', 'self_reference_avg_sharess',
     'self_reference_min_shares', 'data_channel_is_world', 'LDA_02',
     'num_hrefs', 'num_imgs'
 ]
 
-data = data[expected_columns]  # Only keep selected features
+# Check if expected columns are in data
+data = data[[col for col in expected_columns if col in data.columns]]  # Only keep selected features
 
-scaler = joblib.load('scaler.pkl')
-poly = joblib.load('poly_model.pkl')
-gradient_boosting_model = joblib.load('Gradient_Boosting_model.pkl')
-neural_network_model = joblib.load('Neural_Network_model.pkl')
-random_forest_model = joblib.load('Random_Forest_model.pkl')
+# Load models
+try:
+    scaler = joblib.load('scaler.pkl')
+    poly = joblib.load('poly_model.pkl')
+    gradient_boosting_model = joblib.load('Gradient_Boosting_model.pkl')
+    neural_network_model = joblib.load('Neural_Network_model.pkl')
+    random_forest_model = joblib.load('Random_Forest_model.pkl')
+except Exception as e:
+    st.error(f"Error loading models: {e}")
 
 # Function to preprocess data
 def preprocess_data(input_data_df):
-    data_scaled = scaler.transform(input_data_df)
-    data_poly = poly.transform(data_scaled)
-    return data_poly
+    # Ensure columns match the expected set for scaler and poly
+    try:
+        data_scaled = scaler.transform(input_data_df)
+        data_poly = poly.transform(data_scaled)
+        return data_poly
+    except ValueError as e:
+        st.error("Data preprocessing error. Please check input data format.")
+        st.write(e)
+        return None
 
 # Streamlit App
 st.title("News Sharing Prediction App")
@@ -48,7 +59,7 @@ if input_method == "Manual Input by ID":
     
         # Display input fields for each selected feature
         st.write("Adjust or confirm feature values below:")
-        input_data = {feature: st.number_input(f"Enter value for {feature}", value=selected_record[feature]) for feature in data.columns}
+        input_data = {feature: st.number_input(f"Enter value for {feature}", value=selected_record[feature]) for feature in expected_columns}
 
         # Convert input_data to DataFrame for preprocessing
         processed_data = preprocess_data(pd.DataFrame([input_data]))
@@ -58,15 +69,15 @@ elif input_method == "Upload CSV":
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
     if uploaded_file is not None:
         input_data = pd.read_csv(uploaded_file)
-        input_data.columns = input_data.columns.str.strip()
+        input_data.columns = input_data.columns.str.strip().str.replace(" ", "_")  # Clean column names
         st.write("Uploaded data preview:")
         st.write(input_data.head())
-        if isinstance(input_data, dict):
-            input_data = pd.DataFrame([input_data])
-        else:
-            input_data= input_data
+        
+        # Filter to match expected columns
+        input_data = input_data[[col for col in expected_columns if col in input_data.columns]]
+        
+        # Preprocess data
         processed_data = preprocess_data(input_data)
-
 # Option 3: View Preprocessing Results
 elif input_method == "View Preprocessing Results":
     st.subheader("Preprocessing Steps and Visualizations")
