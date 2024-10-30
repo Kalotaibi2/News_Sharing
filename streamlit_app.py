@@ -76,8 +76,8 @@ elif input_method == "Upload CSV":
         st.write(input_data.head())
 
         # Filter columns to match expected features and order
-        if set(expected_features).issubset(input_data.columns):
-            input_data = input_data[expected_features]
+        if set(expected_columns).issubset(input_data.columns):  # Changed expected_features to expected_columns
+            input_data = input_data[expected_columns]
         else:
             st.error("Uploaded file is missing required features.")
             st.stop()
