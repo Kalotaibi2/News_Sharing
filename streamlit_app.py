@@ -5,10 +5,16 @@ from PIL import Image
 
 # Load dataset and models
 data = pd.read_csv("OnlineNewsPopularity.csv")
-data.columns = data.columns.str.strip()  # Clean column names
-data = data[['kw_avg_avg', 'LDA_03', 'kw_max_avg', 'self_reference_avg_sharess',
-             'self_reference_min_shares', 'data_channel_is_world', 'LDA_02',
-             'num_hrefs', 'num_imgs']]  # Only keep selected features
+data.columns = data.columns.str.strip().str.replace(" ", "_")  # Clean column names
+
+# Define the expected columns globally so they're accessible throughout
+expected_columns = [
+    'kw_avg_avg', 'LDA_03', 'kw_max_avg', 'self_reference_avg_sharess',
+    'self_reference_min_shares', 'data_channel_is_world', 'LDA_02',
+    'num_hrefs', 'num_imgs'
+]
+
+data = data[expected_columns]  # Only keep selected features
 
 scaler = joblib.load('scaler.pkl')
 poly = joblib.load('poly_model.pkl')
@@ -18,7 +24,6 @@ random_forest_model = joblib.load('Random_Forest_model.pkl')
 
 # Function to preprocess data
 def preprocess_data(input_data_df):
-    # Scale and transform the data without additional checks
     data_scaled = scaler.transform(input_data_df)
     data_poly = poly.transform(data_scaled)
     return data_poly
@@ -58,7 +63,7 @@ elif input_method == "Upload CSV":
         # Clean up column names to match expected format
         input_data.columns = input_data.columns.str.strip().str.replace(" ", "_")
         
-        # Filter to match required columns (assuming the file has all columns)
+        # Filter to match required columns
         input_data = input_data[expected_columns]
         
         # Preprocess the data
