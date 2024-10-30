@@ -18,17 +18,7 @@ random_forest_model = joblib.load('Random_Forest_model.pkl')
 
 # Function to preprocess data
 def preprocess_data(input_data_df):
-    # Ensure the dataframe has the required columns
-    expected_features = [
-        'kw_avg_avg', 'LDA_03', 'kw_max_avg', 'self_reference_avg_sharess',
-        'self_reference_min_shares', 'data_channel_is_world', 'LDA_02',
-        'num_hrefs', 'num_imgs'
-    ]
-    for feature in expected_features:
-        if feature not in input_data_df.columns:
-            input_data_df[feature] = 0  # Add missing features with default values
-
-    # Scale and transform the data
+    # Scale and transform the data without additional checks
     data_scaled = scaler.transform(input_data_df)
     data_poly = poly.transform(data_scaled)
     return data_poly
@@ -47,20 +37,16 @@ if input_method == "Manual Input by ID":
     # ID Input Field
     id_input = st.number_input("Enter ID", min_value=0, max_value=39643, step=1)
     
-    # Fetch selected record based on ID or set defaults
+    # Fetch selected record based on ID
     if 0 <= id_input < len(data):
         selected_record = data.iloc[int(id_input)].to_dict()
-    else:
-        selected_record = {feature: 0 for feature in data.columns}  # Default values if ID is out of range
     
-    # Display input fields for each selected feature
-    st.write("Adjust or confirm feature values below:")
-    input_data = {}
-    for feature in data.columns:
-        input_data[feature] = st.number_input(f"Enter value for {feature}", value=selected_record[feature])
+        # Display input fields for each selected feature
+        st.write("Adjust or confirm feature values below:")
+        input_data = {feature: st.number_input(f"Enter value for {feature}", value=selected_record[feature]) for feature in data.columns}
 
-    # Convert input_data to DataFrame for preprocessing
-    processed_data = preprocess_data(pd.DataFrame([input_data]))
+        # Convert input_data to DataFrame for preprocessing
+        processed_data = preprocess_data(pd.DataFrame([input_data]))
 
 # Option 2: Upload CSV
 elif input_method == "Upload CSV":
@@ -69,15 +55,8 @@ elif input_method == "Upload CSV":
         # Read the uploaded data
         input_data = pd.read_csv(uploaded_file)
         
-        # Only keep the required features, and ensure column names match exactly
-        expected_features = [
-            'kw_avg_avg', 'LDA_03', 'kw_max_avg', 'self_reference_avg_sharess',
-            'self_reference_min_shares', 'data_channel_is_world', 'LDA_02',
-            'num_hrefs', 'num_imgs'
-        ]
-        
-        # Filter and reorder columns to match the expected input
-        input_data = input_data[[col for col in expected_features if col in input_data.columns]]
+        # Filter to match required columns (assuming the file has all columns)
+        input_data = input_data[data.columns]
         
         # Preprocess the data
         processed_data = preprocess_data(input_data)
@@ -85,6 +64,7 @@ elif input_method == "Upload CSV":
         # Display data preview
         st.write("Uploaded data preview:")
         st.write(input_data.head())
+      
 
 # Option 3: View Preprocessing Results
 elif input_method == "View Preprocessing Results":
