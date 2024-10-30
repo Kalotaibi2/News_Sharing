@@ -93,7 +93,7 @@ elif input_method == "Upload CSV":
         except Exception as e:
             st.error("Error in processing the uploaded file. Ensure it matches the expected format.")
             st.write(e)
-            processed_data = None
+            
             
 
             
