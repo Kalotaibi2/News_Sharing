@@ -73,6 +73,8 @@ if input_method == "Manual Input":
     # Process and predict
     processed_data = preprocess_data(input_data)
     print("Processed Manual Input Data:", processed_data)  # For debugging
+    predictions = model.predict(processed_data)
+    print("Predictions for Manual Input:", predictions)  # For debugging
     
 # Option 2: Upload CSV
 elif input_method == "Upload CSV":
