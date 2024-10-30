@@ -69,8 +69,11 @@ if input_method == "Manual Input":
         'LDA_03': default_LDA_03,
     }
     
+    #processed_data = preprocess_data(input_data)
+    # Process and predict
     processed_data = preprocess_data(input_data)
-
+    print("Processed Manual Input Data:", processed_data)  # For debugging
+    
 # Option 2: Upload CSV
 elif input_method == "Upload CSV":
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
