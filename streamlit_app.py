@@ -94,7 +94,18 @@ elif input_method == "View Preprocessing Results":
         st.write("Most features are continuous variables (e.g., 'n_tokens_content', 'num_hrefs', 'data_channel_is_world').")
         st.write("The target variable, 'shares', is continuous but has been categorized for this analysis.")
 
-    
+    # Distribution Figures
+    if st.button("Distributions"):
+        st.write("Distributions of Selected Features")
+        dist_image = Image.open('selected_features_distributions.png')
+        st.image(dist_image, caption='Distributions of Selected Features', use_column_width=True)
+        st.write("""
+        This series of histograms displays the distribution of continuous features within the dataset. 
+        Many features, such as the number of shares, average keyword weights (kw_avg_avg), and number of hyperlinks (num_hrefs), 
+        show right-skewed distributions. This skewness indicates that while most articles have lower values for these features, 
+        there are a few outliers with significantly higher values, likely due to a small number of highly popular or optimized articles.
+        """)
+        
     # Correlation Button: Display correlation heatmap
     if st.button("Correlation"):
         st.write("Correlation Matrix of Selected Features")
@@ -112,11 +123,16 @@ elif input_method == "View Preprocessing Results":
         st.write("Thresholds for Categorization:")
         st.text(thresholds)
 
-    # Outlier Button: Display boxplot for outliers
+    # Outlier Visualization Before and After
     if st.button("Outliers"):
-        st.write("Outlier Visualization")
-        outlier_image = Image.open('outlier_visualization.png')
-        st.image(outlier_image, caption='Boxplot of Key Features to Identify Outliers', use_column_width=True)
+        st.write("Outlier Visualization - Before Capping")
+        before_outlier_image = Image.open('beforeoutler.png')
+        st.image(before_outlier_image, caption='Boxplot of Key Features Before Outlier Capping', use_column_width=True)
+        
+        st.write("Outlier Visualization - After Capping")
+        after_outlier_image = Image.open('afteroutler.png')
+        st.image(after_outlier_image, caption='Boxplot of Key Features After Outlier Capping', use_column_width=True)
+
         st.write("The boxplot helps identify potential outliers in the selected features.")
         st.write("Outlier thresholds based on 1st and 99th percentiles for each feature:")
         st.write("""
@@ -156,7 +172,9 @@ if 'processed_data' in locals():
         st.write("Predicted Share Categories:")
         st.write(predicted_categories)
 else:
-    st.warning("Please upload a valid file or input correct data.")
+    if input_method in ["Manual Input", "Upload CSV"]:
+        st.warning("Please upload a valid file or input correct data.")
+    
 
 # Note
 st.write("Note: These results are based on the trained models and precomputed analysis. Live predictions will vary with new data.")
