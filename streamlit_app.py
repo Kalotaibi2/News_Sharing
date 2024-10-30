@@ -71,10 +71,25 @@ if input_method == "Manual Input by ID":
 elif input_method == "Upload CSV":
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
     if uploaded_file is not None:
+        # Read the uploaded data
         input_data = pd.read_csv(uploaded_file)
+        
+        # Only keep the required features, and ensure column names match exactly
+        expected_features = [
+            'kw_avg_avg', 'LDA_03', 'kw_max_avg', 'self_reference_avg_sharess',
+            'self_reference_min_shares', 'data_channel_is_world', 'LDA_02',
+            'num_hrefs', 'num_imgs'
+        ]
+        
+        # Filter and reorder columns to match the expected input
+        input_data = input_data[[col for col in expected_features if col in input_data.columns]]
+        
+        # Preprocess the data
+        processed_data = preprocess_data(input_data)
+        
+        # Display data preview
         st.write("Uploaded data preview:")
         st.write(input_data.head())
-        processed_data = preprocess_data(input_data)
 
 # Option 3: View Preprocessing Results
 elif input_method == "View Preprocessing Results":
