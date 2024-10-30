@@ -14,13 +14,13 @@ neural_network_model = joblib.load('Neural_Network_model.pkl')
 random_forest_model = joblib.load('Random_Forest_model.pkl')
 
 # Precomputed averages from the training set
-avg_self_reference_shares = 6401.697579821467
-default_self_reference_min_shares = 3998.7553955201292
-default_kw_avg_avg = 3135.8586389465236
-default_kw_max_avg = 5657.211151064957
-default_data_channel_is_world = 0.21256684491978609
-default_LDA_02 = 0.21632096677306634
-default_LDA_03 = 0.22376961651356772
+#avg_self_reference_shares = 6401.697579821467
+#default_self_reference_min_shares = 3998.7553955201292
+#default_kw_avg_avg = 3135.8586389465236
+#default_kw_max_avg = 5657.211151064957
+#default_data_channel_is_world = 0.21256684491978609
+#default_LDA_02 = 0.21632096677306634
+#default_LDA_03 = 0.22376961651356772
 
 # Streamlit App
 st.title("News Sharing Prediction App")
@@ -60,13 +60,13 @@ if input_method == "Manual Input":
         'n_tokens_content': n_tokens_content,
         'num_hrefs': num_hrefs,
         'num_imgs': num_imgs,
-        'self_reference_avg_sharess': avg_self_reference_shares,
-        'self_reference_min_shares': default_self_reference_min_shares,
-        'kw_avg_avg': default_kw_avg_avg,
-        'kw_max_avg': default_kw_max_avg,
-        'data_channel_is_world': default_data_channel_is_world,
-        'LDA_02': default_LDA_02,
-        'LDA_03': default_LDA_03,
+        'self_reference_avg_sharess': 0,
+        'self_reference_min_shares': 0,
+        'kw_avg_avg': 0,
+        'kw_max_avg': 0,
+        'data_channel_is_world': 0,
+        'LDA_02': 0,
+        'LDA_03': 0,
     }
     if st.button("Predict"):
         #processed_data = preprocess_data(input_data)
