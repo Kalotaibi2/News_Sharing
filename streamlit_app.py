@@ -1,9 +1,6 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import joblib
-import matplotlib.pyplot as plt
-import seaborn as sns
 from PIL import Image
 
 # Load dataset and models
@@ -21,6 +18,17 @@ random_forest_model = joblib.load('Random_Forest_model.pkl')
 
 # Function to preprocess data
 def preprocess_data(input_data_df):
+    # Ensure the dataframe has the required columns
+    expected_features = [
+        'kw_avg_avg', 'LDA_03', 'kw_max_avg', 'self_reference_avg_sharess',
+        'self_reference_min_shares', 'data_channel_is_world', 'LDA_02',
+        'num_hrefs', 'num_imgs'
+    ]
+    for feature in expected_features:
+        if feature not in input_data_df.columns:
+            input_data_df[feature] = 0  # Add missing features with default values
+
+    # Scale and transform the data
     data_scaled = scaler.transform(input_data_df)
     data_poly = poly.transform(data_scaled)
     return data_poly
@@ -29,6 +37,8 @@ def preprocess_data(input_data_df):
 st.title("News Sharing Prediction App")
 st.sidebar.title("Input Method")
 input_method = st.sidebar.radio("Choose input method:", ["Manual Input by ID", "Upload CSV", "View Preprocessing Results"])
+
+processed_data = None
 
 # Option 1: Manual Input with ID
 if input_method == "Manual Input by ID":
@@ -51,7 +61,6 @@ if input_method == "Manual Input by ID":
 
     # Convert input_data to DataFrame for preprocessing
     processed_data = preprocess_data(pd.DataFrame([input_data]))
-
 
 # Option 2: Upload CSV
 elif input_method == "Upload CSV":
@@ -126,9 +135,9 @@ elif input_method == "View Preprocessing Results":
         results_df = pd.read_csv('final_model_evaluation_results.csv')
         st.write(results_df)
 
-#Model selection and prediction
+# Model selection and prediction
 model_choice = st.sidebar.selectbox("Select a model:", ["Gradient Boosting", "Neural Network", "Random Forest"])
-if st.button("Predict"):
+if st.button("Predict") and processed_data is not None:
     if model_choice == "Gradient Boosting":
         predictions = gradient_boosting_model.predict(processed_data)
     elif model_choice == "Neural Network":
@@ -140,4 +149,6 @@ if st.button("Predict"):
     category_map = {0: "Low", 1: "Medium", 2: "High"}
     predicted_category = category_map[predictions[0]]
     st.write(f"Predicted Share Category: {predicted_category}")
-      
+else:
+    if input_method in ["Manual Input by ID", "Upload CSV"] and processed_data is None:
+        st.warning("Please enter valid data or upload a valid file before predicting.")
