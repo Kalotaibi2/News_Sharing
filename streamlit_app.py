@@ -5,7 +5,7 @@ from PIL import Image
 
 # Load dataset and models
 data = pd.read_csv("OnlineNewsPopularity.csv")
-data.columns = data.columns.str.strip().str.replace(" ", "_")  # Clean column names
+data.columns = data.columns.str.strip()  # Clean column names
 
 # Define the expected columns globally so they're accessible throughout
 expected_columns = [
@@ -57,21 +57,11 @@ if input_method == "Manual Input by ID":
 elif input_method == "Upload CSV":
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
     if uploaded_file is not None:
-        # Read the uploaded data
         input_data = pd.read_csv(uploaded_file)
-        
-        # Clean up column names to match expected format
-        input_data.columns = input_data.columns.str.strip().str.replace(" ", "_")
-        
-        # Filter to match required columns
-        input_data = input_data[expected_columns]
-        
-        # Preprocess the data
-        processed_data = preprocess_data(input_data)
-        
-        # Display data preview
+        input_data.columns = input_data.columns.str.strip()
         st.write("Uploaded data preview:")
         st.write(input_data.head())
+        processed_data = preprocess_data(input_data)
 
 # Option 3: View Preprocessing Results
 elif input_method == "View Preprocessing Results":
