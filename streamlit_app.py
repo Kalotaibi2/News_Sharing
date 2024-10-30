@@ -64,33 +64,53 @@ if input_method == "Manual Input by ID":
         # Convert input_data to DataFrame for preprocessing
         processed_data = preprocess_data(pd.DataFrame([input_data]))
 
-# Option 2: Upload CSV
 elif input_method == "Upload CSV":
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
     if uploaded_file is not None:
+        # Step 1: Read the uploaded file
         input_data = pd.read_csv(uploaded_file)
-        input_data.columns = input_data.columns.str.strip()  # Clean column names
-
-        # Display uploaded data preview
+        input_data.columns = input_data.columns.str.strip()  # Ensure clean column names
+        
+        # Step 2: Display the uploaded data preview
         st.write("Uploaded data preview:")
         st.write(input_data.head())
 
-        # Filter columns to match expected features and order
-        if set(expected_columns).issubset(input_data.columns):  # Changed expected_features to expected_columns
+        # Step 3: Filter columns to match expected features
+        if set(expected_columns).issubset(input_data.columns):
             input_data = input_data[expected_columns]
         else:
             st.error("Uploaded file is missing required features.")
             st.stop()
 
-        # Preprocess data inline (scaling and polynomial transformation)
+        # Step 4: Preprocess data inline (scaling and polynomial transformation)
         try:
             data_scaled = scaler.transform(input_data)
             processed_data = poly.transform(data_scaled)
-            st.write("Processed Uploaded CSV Data:", processed_data)  # For debugging
+            
+            # Step 5: Display processed data preview (optional for debugging)
+            st.write("Processed Uploaded CSV Data:")
+            st.write(pd.DataFrame(processed_data).head())  # Show first 5 rows of processed data
+
+            # Step 6: Make predictions
+            if model_choice == "Gradient Boosting":
+                predictions = gradient_boosting_model.predict(processed_data)
+            elif model_choice == "Neural Network":
+                predictions = neural_network_model.predict(processed_data)
+            elif model_choice == "Random Forest":
+                predictions = random_forest_model.predict(processed_data)
+            
+            # Step 7: Map numerical predictions to categories and display them
+            category_map = {0: "Low", 1: "Medium", 2: "High"}
+            predicted_categories = [category_map[pred] for pred in predictions]
+            
+            st.write("Predicted Share Categories:")
+            st.write(predicted_categories)  # Display predictions in a scrollable list format
+
         except Exception as e:
             st.error("Error in processing the uploaded file. Ensure it matches the expected format.")
             st.write(e)
             processed_data = None
+
             
 # Option 3: View Preprocessing Results
 elif input_method == "View Preprocessing Results":
