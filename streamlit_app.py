@@ -90,7 +90,10 @@ elif input_method == "Upload CSV":
             # Step 5: Display processed data preview (optional for debugging)
             st.write("Processed Uploaded CSV Data:")
             st.write(pd.DataFrame(processed_data).head())  # Show first 5 rows of processed data
-
+        except Exception as e:
+            st.error("Error in processing the uploaded file. Ensure it matches the expected format.")
+            st.write(e)
+            processed_data = None
             
 
             
