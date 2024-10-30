@@ -143,9 +143,12 @@ elif input_method == "View Preprocessing Results":
         results_df = pd.read_csv('final_model_evaluation_results.csv')
         st.write(results_df)
 
-# Model selection and prediction
+# Model Selection for prediction
+st.sidebar.title("Choose Model")
 model_choice = st.sidebar.selectbox("Select a model:", ["Gradient Boosting", "Neural Network", "Random Forest"])
-if st.button("Predict") and processed_data is not None:
+
+# Make predictions based on the selected model
+if 'processed_data' in locals():
     if model_choice == "Gradient Boosting":
         predictions = gradient_boosting_model.predict(processed_data)
     elif model_choice == "Neural Network":
@@ -155,8 +158,13 @@ if st.button("Predict") and processed_data is not None:
 
     # Map numerical predictions to categories
     category_map = {0: "Low", 1: "Medium", 2: "High"}
-    predicted_category = category_map[predictions[0]]
-    st.write(f"Predicted Share Category: {predicted_category}")
+    predicted_categories = [category_map[pred] for pred in predictions]
+
+    if len(predicted_categories) == 1:
+        st.write(f"Predicted Share Category: {predicted_categories[0]}")
+    else:
+        st.write("Predicted Share Categories:")
+        st.write(predicted_categories)
 else:
-    if input_method in ["Manual Input by ID", "Upload CSV"] and processed_data is None:
-        st.warning("Please enter valid data or upload a valid file before predicting.")
+    if input_method in ["Manual Input", "Upload CSV"]:
+        st.warning("Please upload a valid file or input correct data.")
