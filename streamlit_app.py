@@ -126,18 +126,18 @@ elif input_method == "View Preprocessing Results":
         results_df = pd.read_csv('final_model_evaluation_results.csv')
         st.write(results_df)
 
-  # Model selection and prediction
-    model_choice = st.sidebar.selectbox("Select a model:", ["Gradient Boosting", "Neural Network", "Random Forest"])
-    if st.button("Predict"):
-        if model_choice == "Gradient Boosting":
-            predictions = gradient_boosting_model.predict(processed_data)
-        elif model_choice == "Neural Network":
-            predictions = neural_network_model.predict(processed_data)
-        elif model_choice == "Random Forest":
-            predictions = random_forest_model.predict(processed_data)
+# Model selection and prediction
+  model_choice = st.sidebar.selectbox("Select a model:", ["Gradient Boosting", "Neural Network", "Random Forest"])
+  if st.button("Predict"):
+      if model_choice == "Gradient Boosting":
+          predictions = gradient_boosting_model.predict(processed_data)
+      elif model_choice == "Neural Network":
+          predictions = neural_network_model.predict(processed_data)
+      elif model_choice == "Random Forest":
+          predictions = random_forest_model.predict(processed_data)
 
-        # Map numerical predictions to categories
-        category_map = {0: "Low", 1: "Medium", 2: "High"}
-        predicted_category = category_map[predictions[0]]
-        st.write(f"Predicted Share Category: {predicted_category}")
+      # Map numerical predictions to categories
+      category_map = {0: "Low", 1: "Medium", 2: "High"}
+      predicted_category = category_map[predictions[0]]
+      st.write(f"Predicted Share Category: {predicted_category}")
       
