@@ -91,25 +91,7 @@ elif input_method == "Upload CSV":
             st.write("Processed Uploaded CSV Data:")
             st.write(pd.DataFrame(processed_data).head())  # Show first 5 rows of processed data
 
-            # Step 6: Make predictions
-            if model_choice == "Gradient Boosting":
-                predictions = gradient_boosting_model.predict(processed_data)
-            elif model_choice == "Neural Network":
-                predictions = neural_network_model.predict(processed_data)
-            elif model_choice == "Random Forest":
-                predictions = random_forest_model.predict(processed_data)
             
-            # Step 7: Map numerical predictions to categories and display them
-            category_map = {0: "Low", 1: "Medium", 2: "High"}
-            predicted_categories = [category_map[pred] for pred in predictions]
-            
-            st.write("Predicted Share Categories:")
-            st.write(predicted_categories)  # Display predictions in a scrollable list format
-
-        except Exception as e:
-            st.error("Error in processing the uploaded file. Ensure it matches the expected format.")
-            st.write(e)
-            processed_data = None
 
             
 # Option 3: View Preprocessing Results
