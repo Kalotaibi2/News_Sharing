@@ -61,6 +61,10 @@ elif input_method == "Upload CSV":
         input_data.columns = input_data.columns.str.strip()
         st.write("Uploaded data preview:")
         st.write(input_data.head())
+         if isinstance(input_data, dict):
+            input_data = pd.DataFrame([input_data])
+        else:
+            input_data= input_data
         processed_data = preprocess_data(input_data)
 
 # Option 3: View Preprocessing Results
