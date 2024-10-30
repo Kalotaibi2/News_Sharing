@@ -6,36 +6,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from PIL import Image
 
-# Load pre-trained models and preprocessing objects
-scaler = joblib.load('scaler.pkl')
-poly = joblib.load('poly_model.pkl')
-gradient_boosting_model = joblib.load('Gradient_Boosting_model.pkl')
-neural_network_model = joblib.load('Neural_Network_model.pkl')
-random_forest_model = joblib.load('Random_Forest_model.pkl')
-
-# Precomputed averages from the training set
-#avg_self_reference_shares = 6401.697579821467
-#default_self_reference_min_shares = 3998.7553955201292
-#default_kw_avg_avg = 3135.8586389465236
-#default_kw_max_avg = 5657.211151064957
-#default_data_channel_is_world = 0.21256684491978609
-#default_LDA_02 = 0.21632096677306634
-#default_LDA_03 = 0.22376961651356772
-
-# Streamlit App
-st.title("News Sharing Prediction App")
-st.sidebar.title("Input Method")
-input_method = st.sidebar.radio("Choose input method:", ["Manual Input", "Upload CSV", "View Preprocessing Results"])
-
-# Function to preprocess data with feature consistency check
-def preprocess_data(input_data):
-    expected_features = [
-        'kw_avg_avg', 'LDA_03', 'kw_max_avg', 'self_reference_avg_sharess',
-        'self_reference_min_shares', 'data_channel_is_world', 'LDA_02',
-        'num_hrefs', 'num_imgs'
-    ]import streamlit as st
-import pandas as pd
-import joblib
 
 # Load dataset and models
 data = pd.read_csv("OnlineNewsPopularity.csv")
@@ -86,6 +56,7 @@ elif input_method == "Select Record from List":
     for feature in selected_features:
         st.write(f"{feature}: {selected_record[feature]}")
     processed_data = preprocess_data(pd.DataFrame([selected_record]))
+
 
 # Option 2: Upload CSV
 elif input_method == "Upload CSV":
