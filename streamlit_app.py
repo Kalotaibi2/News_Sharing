@@ -68,11 +68,11 @@ if input_method == "Manual Input":
         'LDA_02': default_LDA_02,
         'LDA_03': default_LDA_03,
     }
-    
-    #processed_data = preprocess_data(input_data)
-    # Process and predict
-    processed_data = preprocess_data(input_data)
-    st.write("Processed Manual Input Data:", processed_data)  # For debugging
+    if st.button("Predict"):
+        #processed_data = preprocess_data(input_data)
+        # Process and predict
+        processed_data = preprocess_data(input_data)
+        st.write("Processed Manual Input Data:", processed_data)  # For debugging
 
     
     
