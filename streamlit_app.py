@@ -55,8 +55,11 @@ elif input_method == "Upload CSV":
         # Read the uploaded data
         input_data = pd.read_csv(uploaded_file)
         
+        # Clean up column names to match expected format
+        input_data.columns = input_data.columns.str.strip().str.replace(" ", "_")
+        
         # Filter to match required columns (assuming the file has all columns)
-        input_data = input_data[data.columns]
+        input_data = input_data[expected_columns]
         
         # Preprocess the data
         processed_data = preprocess_data(input_data)
@@ -64,7 +67,6 @@ elif input_method == "Upload CSV":
         # Display data preview
         st.write("Uploaded data preview:")
         st.write(input_data.head())
-      
 
 # Option 3: View Preprocessing Results
 elif input_method == "View Preprocessing Results":
