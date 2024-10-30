@@ -44,19 +44,6 @@ if input_method == "Enter ID":
             st.write(f"{feature}: {selected_record[feature]}")
         processed_data = preprocess_data(pd.DataFrame([selected_record]))
 
-# Option 2: Select Record from List
-elif input_method == "Select Record from List":
-    st.write("Select a record from the list:")
-    random_records = data.sample(10, random_state=42).reset_index(drop=True)  # Sample 10 random records
-    record_choice = st.selectbox("Choose a Record", random_records.index)
-    
-    # Display and process the selected record
-    selected_record = random_records.iloc[record_choice, :]
-    st.write("Selected Record Values:")
-    for feature in selected_features:
-        st.write(f"{feature}: {selected_record[feature]}")
-    processed_data = preprocess_data(pd.DataFrame([selected_record]))
-
 
 # Option 2: Upload CSV
 elif input_method == "Upload CSV":
