@@ -185,4 +185,5 @@ elif input_method == "Upload CSV" and processed_data_csv is not None:
             st.write("Predicted Share Categories:")
             st.write(predicted_categories)
 else:
-    st.warning("Please upload a valid file")
+    if input_method == "Upload CSV"and processed_data_csv is None:
+        st.warning("Please upload a valid file")
