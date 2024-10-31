@@ -179,4 +179,4 @@ else:
             st.write(predicted_categories)
     else:
         if input_method in ["Manual Input", "Upload CSV"]:
-        st.warning("Please upload a valid file or input correct data.")
+            st.warning("Please upload a valid file or input correct data.")
