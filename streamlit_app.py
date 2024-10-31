@@ -44,7 +44,11 @@ st.title("News Sharing Prediction App")
 st.sidebar.title("Input Method")
 input_method = st.sidebar.radio("Choose input method:", ["Manual Input by ID", "Upload CSV", "View Preprocessing Results"])
 
-processed_data = None
+# Model Selection for prediction
+st.sidebar.title("Choose Model")
+model_choice = st.sidebar.selectbox("Select a model:", ["Gradient Boosting", "Neural Network", "Random Forest"])
+
+processed_data_manual = None
 
 # Option 1: Manual Input with ID
 if input_method == "Manual Input by ID":
@@ -62,36 +66,25 @@ if input_method == "Manual Input by ID":
         input_data = {feature: st.number_input(f"Enter value for {feature}", value=selected_record[feature]) for feature in expected_columns}
 
         # Convert input_data to DataFrame for preprocessing
-        processed_data = preprocess_data(pd.DataFrame([input_data]))
+        processed_data_manual = preprocess_data(pd.DataFrame([input_data]))
+
 
 # Option 2: Upload CSV
+processed_data_csv = None
 elif input_method == "Upload CSV":
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
     if uploaded_file is not None:
+        # Step 1: Read the uploaded file
         input_data = pd.read_csv(uploaded_file)
-        input_data.columns = input_data.columns.str.strip()  # Clean column names
-
-        # Display uploaded data preview
+        
+        # Step 2: Display the uploaded data preview
         st.write("Uploaded data preview:")
         st.write(input_data.head())
+        input_data.columns = input_data.columns.str.strip()  # Ensure clean column names
+        
+        input_data = input_data[expected_columns]
 
-        # Filter columns to match expected features and order
-        if set(expected_columns).issubset(input_data.columns):
-            input_data = input_data[expected_columns]
-        else:
-            st.error("Uploaded file is missing required features.")
-            st.stop()
-
-        # Preprocess data inline (scaling and polynomial transformation)
-        try:
-            data_scaled = scaler.transform(input_data)
-            processed_data = poly.transform(data_scaled)
-            st.write("Processed Uploaded CSV Data:", processed_data)  # For debugging
-        except Exception as e:
-            st.error("Error in processing the uploaded file. Ensure it matches the expected format.")
-            st.write(e)
-            processed_data = None
-
+        processed_data_csv = preprocess_data(input_data)
 
             
 # Option 3: View Preprocessing Results
@@ -148,13 +141,23 @@ st.sidebar.title("Choose Model")
 model_choice = st.sidebar.selectbox("Select a model:", ["Gradient Boosting", "Neural Network", "Random Forest"])
 
 # Make predictions based on the selected model
-if 'processed_data' in locals():
-    if model_choice == "Gradient Boosting":
-        predictions = gradient_boosting_model.predict(processed_data)
-    elif model_choice == "Neural Network":
-        predictions = neural_network_model.predict(processed_data)
-    elif model_choice == "Random Forest":
-        predictions = random_forest_model.predict(processed_data)
+if input_method == "Manual Input by ID" and processed_data_manual is not None:
+    
+    if st.button("Predict") and processed_data is not None:
+        if model_choice == "Gradient Boosting":
+            predictions = gradient_boosting_model.predict(processed_data)
+        elif model_choice == "Neural Network":
+            predictions = neural_network_model.predict(processed_data)
+        elif model_choice == "Random Forest":
+            predictions = random_forest_model.predict(processed_data)
+else:        
+    if 'processed_data' in locals():
+        if model_choice == "Gradient Boosting":
+            predictions = gradient_boosting_model.predict(processed_data)
+        elif model_choice == "Neural Network":
+            predictions = neural_network_model.predict(processed_data)
+        elif model_choice == "Random Forest":
+            predictions = random_forest_model.predict(processed_data)
 
     # Map numerical predictions to categories
     category_map = {0: "Low", 1: "Medium", 2: "High"}
