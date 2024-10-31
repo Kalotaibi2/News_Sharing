@@ -18,17 +18,17 @@ expected_columns = [
 data = data[[col for col in expected_columns if col in data.columns]]  # Only keep selected features
 
 # Load models
-    scaler = joblib.load('scaler.pkl')
-    poly = joblib.load('poly_model.pkl')
-    gradient_boosting_model = joblib.load('Gradient_Boosting_model.pkl')
-    neural_network_model = joblib.load('Neural_Network_model.pkl')
-    random_forest_model = joblib.load('Random_Forest_model.pkl')
+scaler = joblib.load('scaler.pkl')
+poly = joblib.load('poly_model.pkl')
+gradient_boosting_model = joblib.load('Gradient_Boosting_model.pkl')
+neural_network_model = joblib.load('Neural_Network_model.pkl')
+random_forest_model = joblib.load('Random_Forest_model.pkl')
 
 # Function to preprocess data
 def preprocess_data(input_data_df):
-        data_scaled = scaler.transform(input_data_df)
-        data_poly = poly.transform(data_scaled)
-        return data_poly
+    data_scaled = scaler.transform(input_data_df)
+    data_poly = poly.transform(data_scaled)
+    return data_poly
 
 # Streamlit App
 st.title("News Sharing Prediction App")
