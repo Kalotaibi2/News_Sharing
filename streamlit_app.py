@@ -170,15 +170,15 @@ if input_method == "Manual Input by ID" and processed_data_manual is not None:
         # Map numerical predictions to categories
         category_map = {0: "Low", 1: "Medium", 2: "High"}
         predicted_categories = [category_map[pred] for pred in predictions]
-
-        if len(predicted_categories) == 1:
-            st.write(f"Predicted Share Category: {predicted_categories[0]}")
-        else:
-            st.write("Predicted Share Categories:")
-            st.write(predicted_categories)
+        st.write(f"Predicted Share Category: {predicted_categories[0]}")
+        #if len(predicted_categories) == 1:
+            #st.write(f"Predicted Share Category: {predicted_categories[0]}")
+        #else:
+            #st.write("Predicted Share Categories:")
+            #st.write(predicted_categories)
     else:
         #if input_method in ["Manual Input", "Upload CSV"]:
-        st.warning("Please upload a valid file or input correct data.")
+        st.warning("Please input correct data.")
 
 elif input_method == "Upload CSV" and processed_data_csv is not None:    
     if 'processed_data_csv' in locals():
@@ -198,6 +198,6 @@ elif input_method == "Upload CSV" and processed_data_csv is not None:
         else:
             st.write("Predicted Share Categories:")
             st.write(predicted_categories)
-    else:
-        #if input_method in ["Manual Input", "Upload CSV"]:
-        st.warning("Please upload a valid file or input correct data.")
+else:
+    #if input_method in ["Manual Input", "Upload CSV"]:
+    st.warning("Please upload a valid file")
