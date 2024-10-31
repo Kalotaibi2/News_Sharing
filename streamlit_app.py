@@ -5,7 +5,7 @@ from PIL import Image
 
 # Load dataset and models
 data = pd.read_csv("OnlineNewsPopularity.csv")
-data.columns = data.columns.str.strip().str.replace(" ", "_")  # Clean column names
+data.columns = data.columns.str.strip()  # Clean column names
 
 # Define the expected columns globally
 expected_columns = [
