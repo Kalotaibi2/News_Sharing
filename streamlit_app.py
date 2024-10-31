@@ -177,8 +177,8 @@ if input_method == "Manual Input by ID" and processed_data_manual is not None:
             st.write("Predicted Share Categories:")
             st.write(predicted_categories)
     else:
-        if input_method in ["Manual Input", "Upload CSV"]:
-            st.warning("Please upload a valid file or input correct data.")
+        #if input_method in ["Manual Input", "Upload CSV"]:
+        st.warning("Please upload a valid file or input correct data.")
 
 elif input_method == "Upload CSV" and processed_data_csv is not None:    
     if 'processed_data_csv' in locals():
@@ -199,5 +199,5 @@ elif input_method == "Upload CSV" and processed_data_csv is not None:
             st.write("Predicted Share Categories:")
             st.write(predicted_categories)
     else:
-        if input_method in ["Manual Input", "Upload CSV"]:
-            st.warning("Please upload a valid file or input correct data.")
+        #if input_method in ["Manual Input", "Upload CSV"]:
+        st.warning("Please upload a valid file or input correct data.")
