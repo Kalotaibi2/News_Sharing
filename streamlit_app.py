@@ -159,7 +159,8 @@ if input_method == "Manual Input by ID" and processed_data_manual is not None:
     else:
         if input_method in ["Manual Input", "Upload CSV"]:
             st.warning("Please upload a valid file or input correct data.")
-else:        
+
+elif input_method == "Upload CSV" and processed_data_csv is not None:    
     if 'processed_data_csv' in locals():
         if model_choice == "Gradient Boosting":
             predictions = gradient_boosting_model.predict(processed_data_csv)
