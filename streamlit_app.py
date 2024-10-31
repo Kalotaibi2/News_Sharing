@@ -18,26 +18,17 @@ expected_columns = [
 data = data[[col for col in expected_columns if col in data.columns]]  # Only keep selected features
 
 # Load models
-try:
     scaler = joblib.load('scaler.pkl')
     poly = joblib.load('poly_model.pkl')
     gradient_boosting_model = joblib.load('Gradient_Boosting_model.pkl')
     neural_network_model = joblib.load('Neural_Network_model.pkl')
     random_forest_model = joblib.load('Random_Forest_model.pkl')
-except Exception as e:
-    st.error(f"Error loading models: {e}")
 
 # Function to preprocess data
 def preprocess_data(input_data_df):
-    # Ensure columns match the expected set for scaler and poly
-    try:
         data_scaled = scaler.transform(input_data_df)
         data_poly = poly.transform(data_scaled)
         return data_poly
-    except ValueError as e:
-        st.error("Data preprocessing error. Please check input data format.")
-        st.write(e)
-        return None
 
 # Streamlit App
 st.title("News Sharing Prediction App")
@@ -46,6 +37,7 @@ input_method = st.sidebar.radio("Choose input method:", ["Manual Input by ID", "
 
 processed_data_manual = None
 processed_data_csv = None
+
 # Option 1: Manual Input with ID
 if input_method == "Manual Input by ID":
     st.write("Enter an ID from 0 to 39643 to auto-fill features:")
@@ -171,13 +163,7 @@ if input_method == "Manual Input by ID" and processed_data_manual is not None:
         category_map = {0: "Low", 1: "Medium", 2: "High"}
         predicted_categories = [category_map[pred] for pred in predictions]
         st.write(f"Predicted Share Category: {predicted_categories[0]}")
-        #if len(predicted_categories) == 1:
-            #st.write(f"Predicted Share Category: {predicted_categories[0]}")
-        #else:
-            #st.write("Predicted Share Categories:")
-            #st.write(predicted_categories)
     else:
-        #if input_method in ["Manual Input", "Upload CSV"]:
         st.warning("Please input correct data.")
 
 elif input_method == "Upload CSV" and processed_data_csv is not None:    
@@ -199,5 +185,4 @@ elif input_method == "Upload CSV" and processed_data_csv is not None:
             st.write("Predicted Share Categories:")
             st.write(predicted_categories)
 else:
-    #if input_method in ["Manual Input", "Upload CSV"]:
     st.warning("Please upload a valid file")
