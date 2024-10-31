@@ -86,7 +86,7 @@ elif input_method == "View Preprocessing Results":
         st.write(data.head())
         st.write("This dataset includes 39,644 rows and 61 features (including the target variable 'shares').")
         st.write("It is used for predicting the popularity of news articles based on various features like the number of words, images, and other metadata.")
-        st.write("Most features are continuous variables (e.g., 'n_tokens_content', 'num_hrefs', 'data_channel_is_world').")
+        st.write("All features are continuous variables (e.g., 'n_tokens_content', 'num_hrefs', 'data_channel_is_world').")
         st.write("The target variable, 'shares', is continuous but has been categorized for this analysis.")
 
     # Display distribution figures for selected features
