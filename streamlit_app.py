@@ -139,13 +139,13 @@ model_choice = st.sidebar.selectbox("Select a model:", ["Gradient Boosting", "Ne
 # Make predictions based on the selected model
 if input_method == "Manual Input by ID" and processed_data_manual is not None:
     
-    if st.button("Predict") and processed_data is not None:
+    if st.button("Predict") and processed_data_manual is not None:
         if model_choice == "Gradient Boosting":
-            predictions = gradient_boosting_model.predict(processed_data)
+            predictions = gradient_boosting_model.predict(processed_data_manual)
         elif model_choice == "Neural Network":
-            predictions = neural_network_model.predict(processed_data)
+            predictions = neural_network_model.predict(processed_data_manual)
         elif model_choice == "Random Forest":
-            predictions = random_forest_model.predict(processed_data)
+            predictions = random_forest_model.predict(processed_data_manual)
         
         # Map numerical predictions to categories
         category_map = {0: "Low", 1: "Medium", 2: "High"}
@@ -160,13 +160,13 @@ if input_method == "Manual Input by ID" and processed_data_manual is not None:
         if input_method in ["Manual Input", "Upload CSV"]:
             st.warning("Please upload a valid file or input correct data.")
 else:        
-    if 'processed_data' in locals():
+    if 'processed_data_csv' in locals():
         if model_choice == "Gradient Boosting":
-            predictions = gradient_boosting_model.predict(processed_data)
+            predictions = gradient_boosting_model.predict(processed_data_csv)
         elif model_choice == "Neural Network":
-            predictions = neural_network_model.predict(processed_data)
+            predictions = neural_network_model.predict(processed_data_csv)
         elif model_choice == "Random Forest":
-            predictions = random_forest_model.predict(processed_data)
+            predictions = random_forest_model.predict(processed_data_csv)
 
         # Map numerical predictions to categories
         category_map = {0: "Low", 1: "Medium", 2: "High"}
