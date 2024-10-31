@@ -44,10 +44,6 @@ st.title("News Sharing Prediction App")
 st.sidebar.title("Input Method")
 input_method = st.sidebar.radio("Choose input method:", ["Manual Input by ID", "Upload CSV", "View Preprocessing Results"])
 
-# Model Selection for prediction
-st.sidebar.title("Choose Model")
-model_choice = st.sidebar.selectbox("Select a model:", ["Gradient Boosting", "Neural Network", "Random Forest"])
-
 processed_data_manual = None
 
 # Option 1: Manual Input with ID
