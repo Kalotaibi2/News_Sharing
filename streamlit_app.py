@@ -147,15 +147,15 @@ if input_method == "Manual Input by ID" and processed_data_manual is not None:
         elif model_choice == "Random Forest":
             predictions = random_forest_model.predict(processed_data)
         
-    # Map numerical predictions to categories
-    category_map = {0: "Low", 1: "Medium", 2: "High"}
-    predicted_categories = [category_map[pred] for pred in predictions]
+        # Map numerical predictions to categories
+        category_map = {0: "Low", 1: "Medium", 2: "High"}
+        predicted_categories = [category_map[pred] for pred in predictions]
 
-    if len(predicted_categories) == 1:
-        st.write(f"Predicted Share Category: {predicted_categories[0]}")
-    else:
-        st.write("Predicted Share Categories:")
-        st.write(predicted_categories)
+        if len(predicted_categories) == 1:
+            st.write(f"Predicted Share Category: {predicted_categories[0]}")
+        else:
+            st.write("Predicted Share Categories:")
+            st.write(predicted_categories)
     else:
         if input_method in ["Manual Input", "Upload CSV"]:
             st.warning("Please upload a valid file or input correct data.")
@@ -168,15 +168,15 @@ else:
         elif model_choice == "Random Forest":
             predictions = random_forest_model.predict(processed_data)
 
-    # Map numerical predictions to categories
-    category_map = {0: "Low", 1: "Medium", 2: "High"}
-    predicted_categories = [category_map[pred] for pred in predictions]
+        # Map numerical predictions to categories
+        category_map = {0: "Low", 1: "Medium", 2: "High"}
+        predicted_categories = [category_map[pred] for pred in predictions]
 
-    if len(predicted_categories) == 1:
-        st.write(f"Predicted Share Category: {predicted_categories[0]}")
-    else:
-        st.write("Predicted Share Categories:")
-        st.write(predicted_categories)
+        if len(predicted_categories) == 1:
+            st.write(f"Predicted Share Category: {predicted_categories[0]}")
+        else:
+            st.write("Predicted Share Categories:")
+            st.write(predicted_categories)
     else:
         if input_method in ["Manual Input", "Upload CSV"]:
         st.warning("Please upload a valid file or input correct data.")
