@@ -45,7 +45,7 @@ st.sidebar.title("Input Method")
 input_method = st.sidebar.radio("Choose input method:", ["Manual Input by ID", "Upload CSV", "View Preprocessing Results"])
 
 processed_data_manual = None
-
+processed_data_csv = None
 # Option 1: Manual Input with ID
 if input_method == "Manual Input by ID":
     st.write("Enter an ID from 0 to 39643 to auto-fill features:")
@@ -66,7 +66,7 @@ if input_method == "Manual Input by ID":
 
 
 # Option 2: Upload CSV
-processed_data_csv = None
+
 elif input_method == "Upload CSV":
     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
     if uploaded_file is not None:
